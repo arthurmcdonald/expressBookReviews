@@ -71,22 +71,40 @@ public_users.get('/isbn/:isbn',function (req, res) {
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
-  const author = req.params.author;
-  for (var key in books) {
-    if (books[key].author === author) {
-      res.send(books[key]);
+  const getByAuthorPromise = new Promise((resolve, reject) => {
+    const author = req.params.author;
+    for (var key in books) {
+      if (books[key].author === author) {
+        resolve(res.send(books[key]));
+      }
     }
-  }
+    reject(res.send("No book with that author found."));
+  });
+  
+  getByAuthorPromise.then(function() {
+    console.log("promise resolved");
+  }).catch(function() {
+    console.log("No book with that author found");
+  });
 });
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
-  const title = req.params.title;
-  for (var key in books) {
-    if (books[key].title === title) {
-      res.send(books[key]);
+  const getByTitlePromise = new Promise((resolve, reject) => {
+    const title = req.params.title;
+    for (var key in books) {
+      if (books[key].title === title) {
+        resolve(res.send(books[key]));
+      }
     }
-  }
+    reject(res.send("No book with that title found."));
+  });
+  
+  getByTitlePromise.then(function() {
+    console.log("promise resolved");
+  }).catch(function() {
+    console.log("No book with that title found");
+  });
 });
 
 //  Get book review
