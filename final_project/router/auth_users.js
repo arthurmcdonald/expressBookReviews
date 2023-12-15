@@ -25,15 +25,13 @@ regd_users.post("/login", (req,res) => {
     const username = req.body.username;
     const password = req.body.password;
   
-    console.log(username);
-    console.log(password);
     if (!username || !password) {
         return res.status(404).json({message: "Error logging in"});
     }
   
     if (authenticatedUser(username,password)) {
       let accessToken = jwt.sign({
-        data: password
+        data: username
       }, 'access', { expiresIn: 60 * 60 });
   
       req.session.authorization = {
@@ -51,11 +49,9 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     let isbn = req.params.isbn;
     let book = books[isbn];
     if (book) {
-        console.log(book);
         let review = req.body.review;
         if (review) {
-
-            book.reviews[req.params.user] = review;
+            book.reviews[req.user.data] = review;
         }
         books[isbn] = book;
         res.send(`Book with isbn ${isbn} has updated reviews`);
@@ -68,9 +64,13 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
 regd_users.delete("/auth/review/:isbn", (req, res) => {
     const isbn = req.params.isbn;
     if (isbn){
-        delete books[isbn]
+        book = books[isbn];
+        console.log(book.reviews);
+        console.log(req.user.data);
+        delete book.reviews[req.user.data];
+        books[isbn] = book;
     }
-    res.send(`Book with the ISBN  ${isbn} deleted.`);
+    res.send(`Book review for ISBN ${isbn}, written by ${req.user.data} has been deleted.`);
   });
 
 module.exports.authenticated = regd_users;
