@@ -73,12 +73,17 @@ public_users.get('/isbn/:isbn',function (req, res) {
 public_users.get('/author/:author',function (req, res) {
   const getByAuthorPromise = new Promise((resolve, reject) => {
     const author = req.params.author;
+    let return_books = [];
     for (var key in books) {
       if (books[key].author === author) {
-        resolve(res.send(books[key]));
+        return_books.push(books[key]);
       }
     }
-    reject(res.send("No book with that author found."));
+    if (return_books.length > 0) {
+      resolve(res.send(return_books));
+    } else {
+      reject(res.send("No book with that author found."));
+    }
   });
   
   getByAuthorPromise.then(function() {
@@ -92,12 +97,17 @@ public_users.get('/author/:author',function (req, res) {
 public_users.get('/title/:title',function (req, res) {
   const getByTitlePromise = new Promise((resolve, reject) => {
     const title = req.params.title;
+    let return_books = []
     for (var key in books) {
       if (books[key].title === title) {
-        resolve(res.send(books[key]));
+        return_books.push(books[key]);
       }
     }
-    reject(res.send("No book with that title found."));
+    if (return_books.length > 0) {
+      resolve(res.send(return_books));
+    } else {
+      reject(res.send("No book with that title found."));
+    }
   });
   
   getByTitlePromise.then(function() {
